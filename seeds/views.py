@@ -3,8 +3,8 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Customer, Seed, Purchase, Sale
-from .serializers import CustomerSerializer, SeedSerializer, PurchaseSerializer,SaleSerializer, SaleSaveSerializer,PurchaseSaveSerializer
+from .models import Customer, Seed, Purchase, Sale, Feed
+from .serializers import CustomerSerializer, SeedSerializer, PurchaseSerializer,SaleSerializer, SaleSaveSerializer,PurchaseSaveSerializer,FeedSaveSerializer,FeedSerializer
 from rest_framework.views import APIView
 from django.db.models import Sum
 from rest_framework.generics import ListAPIView
@@ -45,7 +45,6 @@ def PurchaseListView(request):
         else:
             print(serializer.errors)
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['GET', 'POST'])
 def SeedListView(request):
@@ -69,7 +68,6 @@ def SeedListView(request):
         else:
             print(serializer.errors)
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response(data = serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['GET', 'POST'])
 def SaleListView(request):
@@ -88,7 +86,46 @@ def SaleListView(request):
         else:
             print(serializer.errors)
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+@api_view(['GET', 'POST'])
+def FeedListView(request):
+    if request.method == 'GET':
+        customers = Sale.objects.all()
+        serializer = FeedSerializer(customers, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        data = request.data
+        serializer = FeedSaveSerializer(data=request.data, many=True)  # Use many=True
+        if serializer.is_valid():
+            serializer.save()
+            data=serializer.data
+            return Response(data, status=status.HTTP_201_CREATED)
+        else:
+            print(serializer.errors)
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SalesByCustomer(APIView):
+    def get(self,request,id,*args, **kwargs):
+        sales=Sale.objects.filter(user=id)
+        serializer=SaleSerializer(sales,many=True)
+        return Response(data=serializer.data,status=status.HTTP_200_OK)
     
+class PurchaseByCustomer(APIView):
+    def get(self,request,id,*args, **kwargs):
+        purchases=Purchase.objects.filter(user=id)
+        serializer=PurchaseSerializer(purchases,many=True)
+        return Response(data=serializer.data,status=status.HTTP_200_OK)
+    
+class FeedByCustomer(APIView):
+    def get(self,request,id,*args, **kwargs):
+        feeds=Feed.objects.filter(user=id)
+        serializer=PurchaseSerializer(feeds,many=True)
+        return Response(data=serializer.data,status=status.HTTP_200_OK)
+    
+
+#not in use at that time
 @api_view(['GET', 'PUT', 'DELETE'])
 def PurchaseDetailView(request, pk):
     try:
@@ -110,24 +147,7 @@ def PurchaseDetailView(request, pk):
     elif request.method == 'DELETE':
         customer.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class SalesByCustomer(APIView):
-    def get(self,request,id,*args, **kwargs):
-        sales=Sale.objects.filter(user=id)
-        serializer=SaleSerializer(sales,many=True)
-        return Response(data=serializer.data,status=status.HTTP_200_OK)
     
-class PurchaseByCustomer(APIView):
-    def get(self,request,id,*args, **kwargs):
-        purchases=Purchase.objects.filter(user=id)
-        serializer=PurchaseSerializer(purchases,many=True)
-        return Response(data=serializer.data,status=status.HTTP_200_OK)
-    
-
-from rest_framework.generics import ListAPIView
-from rest_framework.response import Response
-# from django.db.models import Sum
 
 class SaleListViewTotal(ListAPIView):
     serializer_class = SaleSerializer
@@ -173,14 +193,6 @@ class SaleListViewTotal(ListAPIView):
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def test(request):
-    # serializer_class = SeedSerializer
-
-    # def get_queryset(self):
-    #     # Filter Sales related to Seeds
-    #     queryset = Seed.objects.all()
-    #     print(queryset)
-    #     # return Response(queryset)
-    #     return queryset
     
     response={
         'sales': []
@@ -195,13 +207,7 @@ def test(request):
            'total_purchases': purchase,
            'remain': 0,
         }
-
-        # print(response_data)
         response["sales"].append(response_data)
-    
-
-    
-
     return Response(response)
 
 
