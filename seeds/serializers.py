@@ -18,7 +18,7 @@ class SeedSerializer(serializers.ModelSerializer):
     stock = serializers.SerializerMethodField()
     class Meta:
         model = Seed
-        fields = ['id', 'name', 'code', 'amount', 'total_sales_amount', 'total_purchase_amount','profit', 'total_purchase_stock','total_sale_stock','stock']
+        fields = ['id', 'name', 'code', 'amount', 'total_sales_amount', 'total_purchase_amount', 'total_feed_amount', 'profit', 'total_purchase_stock','total_sale_stock', 'total_feed_stock', 'stock']
 
     def get_total_sales_amount(self, obj):
         # Calculate and return the total sales amount for this seed
@@ -29,19 +29,19 @@ class SeedSerializer(serializers.ModelSerializer):
         # Calculate and return the total purchase amount for this seed
         total_purchases = obj.total_purchase_amount()
         return total_purchases
-    
+
     def get_total_feed_amount(self, obj):
         # Calculate and return the total purchase amount for this seed
         total_feeds = obj.total_purchase_amount()
         return total_feeds
-    
+
     def get_profit(self, obj):
         # Calculate and return the profit for this seed
         total_sales = obj.total_sales_amount()
         total_purchases = obj.total_purchase_amount()
         total_feeds = obj.total_feed_amount()
         return total_purchases - total_sales - total_feeds
-    
+
     def get_total_sale_stock(self, obj):
         total_sales_stock = obj.total_sale_stock()
         return total_sales_stock
@@ -49,11 +49,11 @@ class SeedSerializer(serializers.ModelSerializer):
     def get_total_purchase_stock(self, obj):
         total_purchases_stock = obj.total_purchase_stock()
         return total_purchases_stock
-    
+
     def get_total_feed_stock(self, obj):
         total_feeds_stock = obj.total_purchase_stock()
         return total_feeds_stock
-    
+
     def get_stock(self, obj):
         # Calculate and return the profit for this seed
         sales_stock = obj.total_sale_stock()
@@ -72,7 +72,7 @@ class CustomerNameSerializer(serializers.ModelSerializer):
 class SeedNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seed
-        fields = ['name'] 
+        fields = ['name']
 
 class PurchaseSerializer(serializers.ModelSerializer):
     user =CustomerNameSerializer(read_only=True)
@@ -88,7 +88,7 @@ class SaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sale
         fields = '__all__'
-    
+
 
 
 class PurchaseSaveSerializer(serializers.ModelSerializer):
@@ -101,12 +101,12 @@ class PurchaseSaveSerializer(serializers.ModelSerializer):
         user = obj.user
         serializer = CustomerNameSerializer(user, many=False)
         return serializer.data
-    
+
     def get_item(self, obj):
         item = obj.item
         serializer = SeedNameSerializer(item, many=False)
         return serializer.data
-    
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['user'] = self.get_user(instance)
@@ -123,19 +123,19 @@ class SaleSaveSerializer(serializers.ModelSerializer):
         user = obj.user
         serializer = CustomerNameSerializer(user, many=False)
         return serializer.data
-    
+
     def get_item(self, obj):
         item = obj.item
         serializer = SeedNameSerializer(item, many=False)
         return serializer.data
-    
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['user'] = self.get_user(instance)
         data['item'] = self.get_item(instance)
 
         return data
-    
+
 class FeedSerializer(serializers.ModelSerializer):
     user = CustomerNameSerializer(many=False)
     item = SeedNameSerializer(many=False)
@@ -152,16 +152,15 @@ class FeedSaveSerializer(serializers.ModelSerializer):
         user = obj.user
         serializer = CustomerNameSerializer(user, many=False)
         return serializer.data
-    
+
     def get_item(self, obj):
         item = obj.item
         serializer = SeedNameSerializer(item, many=False)
         return serializer.data
-    
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['user'] = self.get_user(instance)
         data['item'] = self.get_item(instance)
 
         return data
-    

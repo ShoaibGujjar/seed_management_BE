@@ -45,7 +45,7 @@ def PurchaseListView(request):
         else:
             print(serializer.errors)
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
 @api_view(['GET', 'POST'])
 def SeedListView(request):
     if request.method == 'GET':
@@ -68,7 +68,7 @@ def SeedListView(request):
         else:
             print(serializer.errors)
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
 @api_view(['GET', 'POST'])
 def SaleListView(request):
     if request.method == 'GET':
@@ -86,12 +86,12 @@ def SaleListView(request):
         else:
             print(serializer.errors)
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+
 @api_view(['GET', 'POST'])
 def FeedListView(request):
     if request.method == 'GET':
-        customers = Sale.objects.all()
-        serializer = FeedSerializer(customers, many=True)
+        feeds = Feed.objects.all()
+        serializer = FeedSerializer(feeds, many=True)
         return Response(serializer.data)
 
     elif request.method == 'POST':
@@ -111,19 +111,19 @@ class SalesByCustomer(APIView):
         sales=Sale.objects.filter(user=id)
         serializer=SaleSerializer(sales,many=True)
         return Response(data=serializer.data,status=status.HTTP_200_OK)
-    
+
 class PurchaseByCustomer(APIView):
     def get(self,request,id,*args, **kwargs):
         purchases=Purchase.objects.filter(user=id)
         serializer=PurchaseSerializer(purchases,many=True)
         return Response(data=serializer.data,status=status.HTTP_200_OK)
-    
+
 class FeedByCustomer(APIView):
     def get(self,request,id,*args, **kwargs):
         feeds=Feed.objects.filter(user=id)
-        serializer=PurchaseSerializer(feeds,many=True)
+        serializer=FeedSerializer(feeds,many=True)
         return Response(data=serializer.data,status=status.HTTP_200_OK)
-    
+
 
 #not in use at that time
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -147,7 +147,7 @@ def PurchaseDetailView(request, pk):
     elif request.method == 'DELETE':
         customer.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
 
 class SaleListViewTotal(ListAPIView):
     serializer_class = SaleSerializer
@@ -193,7 +193,7 @@ class SaleListViewTotal(ListAPIView):
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def test(request):
-    
+
     response={
         'sales': []
     }
@@ -211,8 +211,8 @@ def test(request):
     return Response(response)
 
 
-   
-        
+
+
         # print(total_sales)
 
     # # # Create a dictionary with the totals
@@ -229,7 +229,6 @@ def test(request):
     # Create a response with the totals
         # response_data = {
         #     # 'totals': list,
-        #     
+        #
         # }
 
-        

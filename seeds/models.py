@@ -112,6 +112,7 @@ class Feed(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True, default=0)
     kgForPrice = models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True, default=0)
     quantity_mn = models.CharField(max_length=100, null=True, blank=True)
+    rent = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     grinding = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     mixing = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
