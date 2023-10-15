@@ -22,7 +22,11 @@ urlpatterns = [
     path('sales/<int:id>/', views.SalesByCustomer.as_view()),
 
     # Feed URLs
-    path('feeds/', views.FeedListView, name='purchase-list'),
+    path('feeds/', views.FeedListView, name='feed-list'),
     path('feeds/<int:id>/', views.FeedByCustomer.as_view()),
+
+    # Ledger URLs
+    path('ledger/', views.  LedgerListView, name='ledger-list'),
+    path('ledger/<int:id>/', views.LedgerByCustomer.as_view()),
     # path('purchases/<int:id>/', views.PurchaseByCustomer.as_view()),
 ]

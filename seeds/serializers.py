@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Customer, Seed, Purchase, Sale,Feed
+from .models import Customer, Seed, Purchase, Sale, Feed, Ledger
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -162,5 +162,31 @@ class FeedSaveSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data['user'] = self.get_user(instance)
         data['item'] = self.get_item(instance)
+
+        return data
+    
+
+class LedgerSerializer(serializers.ModelSerializer):
+    user = CustomerNameSerializer(many=False)
+
+    class Meta:
+        model = Ledger
+        fields = '__all__'
+
+
+class LedgerSaveSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Ledger
+        fields = '__all__'
+
+    def get_user(self, obj):
+        user = obj.user
+        serializer = CustomerNameSerializer(user, many=False)
+        return serializer.data
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['user'] = self.get_user(instance)
 
         return data

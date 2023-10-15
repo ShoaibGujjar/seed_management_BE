@@ -121,3 +121,17 @@ class Feed(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.item} - {self.date}"
+    
+
+class Ledger(models.Model):
+    user = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+    date = models.DateTimeField(auto_now_add=False,null=True)
+    vehicle = models.CharField(max_length=100, null=True, blank=True)
+    description = models.CharField(max_length=100, null=True, blank=True)
+    debit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    credit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    totalKg = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    remaing = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
+    def __str__(self):
+        return f"{self.user} - {self.date} - {self.vehicle}"

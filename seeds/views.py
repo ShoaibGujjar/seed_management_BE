@@ -3,8 +3,8 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Customer, Seed, Purchase, Sale, Feed
-from .serializers import CustomerSerializer, SeedSerializer, PurchaseSerializer,SaleSerializer, SaleSaveSerializer,PurchaseSaveSerializer,FeedSaveSerializer,FeedSerializer
+from .models import Customer, Seed, Purchase, Sale, Feed, Ledger
+from .serializers import CustomerSerializer, SeedSerializer, PurchaseSerializer,SaleSerializer, SaleSaveSerializer,PurchaseSaveSerializer,FeedSaveSerializer,FeedSerializer, LedgerSaveSerializer, LedgerSerializer
 from rest_framework.views import APIView
 from django.db.models import Sum
 from rest_framework.generics import ListAPIView
@@ -22,7 +22,6 @@ def CustomerListView(request):
         return Response(serializer.data)
 
     elif request.method == 'POST':
-        print(request.data)
         serializer = CustomerSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -37,14 +36,17 @@ def PurchaseListView(request):
         return Response(serializer.data)
 
     elif request.method == 'POST':
-        print(request.data)
-        serializer = PurchaseSaveSerializer(data=request.data ,many= True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # print(request.data['total'])
+        purchase_serializer = PurchaseSaveSerializer(data=request.data['purchase'] ,many= True)
+        total_serializer = LedgerSaveSerializer(data=request.data['total'])
+        if purchase_serializer.is_valid() and total_serializer.is_valid():
+            purchase_serializer.save()
+            total_serializer.save()
+            return Response(data=purchase_serializer.data, status=status.HTTP_201_CREATED)
         else:
-            print(serializer.errors)
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={
+                "status": "error"
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST'])
 def SeedListView(request):
@@ -54,7 +56,6 @@ def SeedListView(request):
         return Response(serializer.data)
 
     elif request.method == 'POST':
-        print(request.data)
         data = request.data
         code = data['code']
         seed = Seed.objects.filter(code = code)
@@ -106,6 +107,23 @@ def FeedListView(request):
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET', 'POST'])
+def LedgerListView(request):
+    if request.method == 'GET':
+        feeds = Ledger.objects.all()
+        serializer = LedgerSerializer(feeds, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        data = request.data
+        serializer = LedgerSaveSerializer(data=request.data, many=True)  # Use many=True
+        if serializer.is_valid():
+            serializer.save()
+            data=serializer.data
+            return Response(data, status=status.HTTP_201_CREATED)
+        else:
+            print(serializer.errors)
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class SalesByCustomer(APIView):
     def get(self,request,id,*args, **kwargs):
         sales=Sale.objects.filter(user=id)
@@ -120,10 +138,16 @@ class PurchaseByCustomer(APIView):
 
 class FeedByCustomer(APIView):
     def get(self,request,id,*args, **kwargs):
-        feeds=Feed.objects.filter(user=id)
-        serializer=FeedSerializer(feeds,many=True)
+        ledger=Feed.objects.filter(user=id)
+        serializer=FeedSerializer(ledger,many=True)
         return Response(data=serializer.data,status=status.HTTP_200_OK)
 
+class LedgerByCustomer(APIView):
+    def get(self,request,id,*args, **kwargs):
+        ledger=Ledger.objects.filter(user=id)
+        serializer=LedgerSerializer(ledger,many=True)
+        return Response(data=serializer.data,status=status.HTTP_200_OK)
+    
 
 #not in use at that time
 @api_view(['GET', 'PUT', 'DELETE'])
