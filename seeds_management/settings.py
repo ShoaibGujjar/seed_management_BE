@@ -26,13 +26,13 @@ SECRET_KEY = 'django-insecure-do&v)46ltjj04f@zfb*f@^_ns74=#n5flaew!&!2e8wyc20pju
 
 
 #deploment
-# DEBUG = False
-# ALLOWED_HOSTS = ['shoaibgujjar.pythonanywhere.com']
+DEBUG = False
+ALLOWED_HOSTS = ['shoaibgujjar.pythonanywhere.com']
 
 
 #Local
-DEBUG = True
-ALLOWED_HOSTS = []
+# DEBUG = True
+# ALLOWED_HOSTS = []
 
 
 # Application definition
