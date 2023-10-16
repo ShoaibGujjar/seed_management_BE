@@ -27,26 +27,7 @@ def CustomerListView(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['GET', 'POST'])
-def PurchaseListView(request):
-    if request.method == 'GET':
-        customers = Purchase.objects.all()
-        serializer = PurchaseSerializer(customers, many=True)
-        return Response(serializer.data)
-
-    elif request.method == 'POST':
-        # print(request.data['total'])
-        purchase_serializer = PurchaseSaveSerializer(data=request.data['purchase'] ,many= True)
-        total_serializer = LedgerSaveSerializer(data=request.data['total'])
-        if purchase_serializer.is_valid() and total_serializer.is_valid():
-            purchase_serializer.save()
-            total_serializer.save()
-            return Response(data=purchase_serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(data={
-                "status": "error"
-            }, status=status.HTTP_400_BAD_REQUEST)
+    
 
 @api_view(['GET', 'POST'])
 def SeedListView(request):
@@ -70,6 +51,28 @@ def SeedListView(request):
             print(serializer.errors)
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(['GET', 'POST'])
+def PurchaseListView(request):
+    if request.method == 'GET':
+        customers = Purchase.objects.all()
+        serializer = PurchaseSerializer(customers, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        # print(request.data['total'])
+        purchase_serializer = PurchaseSaveSerializer(data=request.data['purchase'] ,many= True)
+        total_serializer = LedgerSaveSerializer(data=request.data['total'])
+        if purchase_serializer.is_valid() and total_serializer.is_valid():
+            purchase_serializer.save()
+            total_serializer.save()
+            return Response(data=purchase_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data={
+                "status": "error"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+
 @api_view(['GET', 'POST'])
 def SaleListView(request):
     if request.method == 'GET':
@@ -78,15 +81,16 @@ def SaleListView(request):
         return Response(serializer.data)
 
     elif request.method == 'POST':
-        data = request.data
-        serializer = SaleSaveSerializer(data=request.data, many=True)  # Use many=True
-        if serializer.is_valid():
-            serializer.save()
-            data=serializer.data
-            return Response(data, status=status.HTTP_201_CREATED)
+        sale_serializer = SaleSaveSerializer(data=request.data['sale'], many=True)
+        total_serializer = LedgerSaveSerializer(data=request.data['total'])
+        if sale_serializer.is_valid() and total_serializer.is_valid():
+            sale_serializer.save()
+            total_serializer.save()
+            return Response(data=sale_serializer.data, status=status.HTTP_201_CREATED)
         else:
-            print(serializer.errors)
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={
+                "status": "error"
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST'])
 def FeedListView(request):
@@ -96,15 +100,18 @@ def FeedListView(request):
         return Response(serializer.data)
 
     elif request.method == 'POST':
-        data = request.data
-        serializer = FeedSaveSerializer(data=request.data, many=True)  # Use many=True
-        if serializer.is_valid():
-            serializer.save()
-            data=serializer.data
-            return Response(data, status=status.HTTP_201_CREATED)
+        print(request.data)
+        feed_serializer = FeedSaveSerializer(data=request.data['feed'], many=True)
+        total_serializer = LedgerSaveSerializer(data=request.data['total'])
+            
+        if feed_serializer.is_valid() and total_serializer.is_valid():
+            feed_serializer.save()
+            total_serializer.save()
+            return Response(data=feed_serializer.data, status=status.HTTP_201_CREATED)
         else:
-            print(serializer.errors)
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={
+                "status": "error"
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'POST'])

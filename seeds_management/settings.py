@@ -26,13 +26,13 @@ SECRET_KEY = 'django-insecure-do&v)46ltjj04f@zfb*f@^_ns74=#n5flaew!&!2e8wyc20pju
 
 
 #deploment
-DEBUG = False
-ALLOWED_HOSTS = ['shoaibgujjar.pythonanywhere.com']
+# DEBUG = False
+# ALLOWED_HOSTS = ['shoaibgujjar.pythonanywhere.com']
 
 
 #Local
-# DEBUG = True
-# ALLOWED_HOSTS = []
+DEBUG = True
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -154,29 +154,16 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-#local
-# CORS_ALLOWED_ORIGINS = [
-#     'http://localhost:3000',
-#     'http://127.0.0.1:3000',
-#     'https://test-dev.d2zhne8r6xk6nm.amplifyapp.com',
-# ]
-
-# CSRF_TRUSTED_ORIGINS = [
-#     'http://localhost:3000',
-#     'http://127.0.0.1:3000',
-#     'https://test-dev.d2zhne8r6xk6nm.amplifyapp.com',
-# ]
-
-# deploy
-
+# local
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-    'https://test-dev.d2zhne8r6xk6nm.amplifyapp.com/',
+    'https://test-dev.d2zhne8r6xk6nm.amplifyapp.com',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-    'https://test-dev.d2zhne8r6xk6nm.amplifyapp.com/',
+    'https://test-dev.d2zhne8r6xk6nm.amplifyapp.com',
 ]
+

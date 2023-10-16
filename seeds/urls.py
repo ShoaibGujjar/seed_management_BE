@@ -9,6 +9,7 @@ urlpatterns = [
 
     # Seed URLs
     path('seeds/', views.SeedListView, name='seed-list'),
+    #not in use at that time
     path('test/', views.test, name='seed-list'),
     path('seed-total-sales/', views.SaleListViewTotal.as_view(), name='seed-total-sales'),
     path('seed-total/', views.test, name='seed-total'),
