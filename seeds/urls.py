@@ -27,7 +27,9 @@ urlpatterns = [
     path('feeds/<int:id>/', views.FeedByCustomer.as_view()),
 
     # Ledger URLs
-    path('ledger/', views.  LedgerListView, name='ledger-list'),
+    path('ledger/', views.LedgerListView, name='ledger-list'),
+    path('update-ledger/<int:pk>/', views.LedgerListView),
+
     path('ledger/<int:id>/', views.LedgerByCustomer.as_view()),
     # path('purchases/<int:id>/', views.PurchaseByCustomer.as_view()),
 ]

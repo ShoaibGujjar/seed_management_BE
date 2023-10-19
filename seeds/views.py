@@ -114,8 +114,8 @@ def FeedListView(request):
             }, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'POST'])
-def LedgerListView(request):
+@api_view(['GET', 'POST', 'PUT'])
+def LedgerListView(request, pk=None):
     if request.method == 'GET':
         feeds = Ledger.objects.all()
         serializer = LedgerSerializer(feeds, many=True)
@@ -123,14 +123,29 @@ def LedgerListView(request):
 
     elif request.method == 'POST':
         data = request.data
-        serializer = LedgerSaveSerializer(data=request.data, many=True)  # Use many=True
+        serializer = LedgerSaveSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            data=serializer.data
+            data = serializer.data
             return Response(data, status=status.HTTP_201_CREATED)
         else:
-            print(serializer.errors)
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'PUT':
+        if pk is not None:
+            ledger = Ledger.objects.get(pk=pk)
+            data = request.data
+            print(ledger,data)
+            serializer = LedgerSaveSerializer(ledger, data=data)
+            if serializer.is_valid():
+                serializer.save()
+                data = serializer.data
+                return Response(data, status=status.HTTP_200_OK)
+            else:
+                return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 class SalesByCustomer(APIView):
     def get(self,request,id,*args, **kwargs):
         sales=Sale.objects.filter(user=id)
